@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无人机 AI 识别服务器</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f4f4f9; margin-top: 50px; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: inline-block; }
+        h1 { color: #333; }
+        .upload-box { border: 2px dashed #3498db; padding: 30px; margin: 20px 0; border-radius: 10px; background: #ebf5fb; }
+        button { background-color: #3498db; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #2980b9; }
+        .footer { margin-top: 20px; color: #7f8c8d; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚁 无人机目标检测云服务器</h1>
+        <p>后端驱动：NVIDIA GeForce RTX 4060 (WSL2 + Docker)</p>
+        
+        <div class="upload-box">
+            <form action="/detect" method="post" enctype="multipart/form-data">
+                <input type="file" name="image" accept="image/*" required>
+                <br><br>
+                <button type="submit">发送给 RTX 4060 进行识别</button>
+            </form>
+        </div>
+        
+        <div class="footer">
+            上传航拍图或普通照片，服务器将实时返回 YOLOv8 检测结果
+        </div>
+    </div>
+</body>
+</html>

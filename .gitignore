@@ -9,3 +9,5 @@ runs/
 
 # 忽略整个 .idea 文件夹（建议全部忽略，保持纯净）
 .idea/
+
+pycache/ runs/ *.pt *.jpg *.jpeg *.png result.jpg .venv/
