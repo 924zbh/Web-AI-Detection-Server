@@ -1,0 +1,11 @@
+# 忽略权重文件
+*.pt
+
+# 忽略 YOLO 运行结果
+runs/
+
+# 忽略 Jupyter 缓存
+.ipynb_checkpoints/
+
+# 忽略整个 .idea 文件夹（建议全部忽略，保持纯净）
+.idea/
