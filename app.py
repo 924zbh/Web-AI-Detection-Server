@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # 在启动时加载模型，避免每次请求都重新加载，提高速度
 # 它会识别并利用你的 RTX 4060
-model = YOLO('yolov8n.pt') 
+model = YOLO('yolov8l.pt')
 
 @app.route('/')
 def index():
@@ -30,7 +30,7 @@ def detect():
 
     # 2. 使用 GPU (device=0) 进行推理
     # results 是一个列表，包含检测到的框、类别等信息
-    results = model.predict(source=img, device=0, save=False)
+    results = model.predict(source=img, device=0, save=False,imgsz=640)
 
     # 3. 将检测框画在图片上 (plot() 返回的是 BGR 格式的 numpy 数组)
     res_plotted = results[0].plot()
