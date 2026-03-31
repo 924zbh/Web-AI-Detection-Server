@@ -26,7 +26,7 @@ docker run -d \
   $IMAGE_NAME
 
 echo "✅ 服务已在后台启动！"
-echo "🌐 请访问: http://localhost:8080"
+echo "🌐 请访问: http://localhost:5000"
 echo "📝 查看日志: docker logs -f $CONTAINER_NAME"
 
 # 2. 新增：云端同步判断逻辑

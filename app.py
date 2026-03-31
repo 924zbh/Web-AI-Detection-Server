@@ -1,50 +1,61 @@
-from flask import Flask, request, send_file
-from ultralytics import YOLO
-import io
-from PIL import Image
+import os, time, cv2, sys
 import numpy as np
+from flask import Flask, render_template, request, jsonify
+from ultralytics import YOLO
 
 app = Flask(__name__)
 
-# 在启动时加载模型，避免每次请求都重新加载，提高速度
-# 它会识别并利用你的 RTX 4060
-model = YOLO('yolov8l.pt')
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+# 路径配置
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+RES_DIR = os.path.join(BASE_DIR, 'static', 'uploads', 'results')
+os.makedirs(RES_DIR, exist_ok=True)
+
+# 加载模型 (开启半精度加速)
+model = YOLO('yolov8l.pt') 
 
 @app.route('/')
 def index():
-    # 返回我们刚才创建的网页首页
-    try:
-        return send_file('index.html')
-    except Exception as e:
-        return f"找不到 index.html 文件，请确保它在同一目录下。错误: {str(e)}"
+    return render_template('index.html')
 
 @app.route('/detect', methods=['POST'])
 def detect():
-    if 'image' not in request.files:
-        return "请上传图片", 400
+    # 1. 检查文件
+    file = request.files.get('image')
+    if not file:
+        return jsonify({"status": "error", "error": "未收到图片"}), 400
 
-    file = request.files['image']
-    
-    # 1. 读取上传的图片
-    img = Image.open(file.stream)
+    try:
+        # 2. 【核心优化】从请求流中直接读取二进制数据到内存
+        file_bytes = file.read()
+        nparr = np.frombuffer(file_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    # 2. 使用 GPU (device=0) 进行推理
-    # results 是一个列表，包含检测到的框、类别等信息
-    results = model.predict(source=img, device=0, save=False,imgsz=640)
+        if img is None:
+            return jsonify({"status": "error", "error": "图片解码失败"}), 400
 
-    # 3. 将检测框画在图片上 (plot() 返回的是 BGR 格式的 numpy 数组)
-    res_plotted = results[0].plot()
+        # 3. 推理 (直接传递内存中的图像数组)
+        # imgsz=640 与前端压缩尺寸对齐，half=True 开启 4060 的半精度加速
+        results = model.predict(source=img, device=0, imgsz=640, half=True,conf=0.7)
+        
+        # 4. 在内存中绘制结果图
+        res_img = results[0].plot()
 
-    # 4. 转换格式：OpenCV 的 BGR 格式转为 PIL 的 RGB 格式
-    res_img = Image.fromarray(res_plotted[:, :, ::-1])
+        # 5. 保存结果图到硬盘 (用于前端展示)
+        ts = time.strftime("%Y%m%d_%H%M%S")
+        res_filename = f"res_{ts}.jpg"
+        res_path = os.path.join(RES_DIR, res_filename)
+        cv2.imwrite(res_path, res_img)
 
-    # 5. 将处理后的图片保存到内存缓冲区，直接发回给浏览器
-    img_io = io.BytesIO()
-    res_img.save(img_io, 'JPEG')
-    img_io.seek(0)
+        # 6. 立即返回结果
+        return jsonify({
+            "status": "success", 
+            "res_url": f"static/uploads/results/{res_filename}"
+        })
 
-    return send_file(img_io, mimetype='image/jpeg')
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"status": "error", "error": str(e)}), 500
 
 if __name__ == '__main__':
-    # host='0.0.0.0' 让局域网内的其他设备也能通过你的 IP 访问
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=False)
