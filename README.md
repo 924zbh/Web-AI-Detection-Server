@@ -1,60 +1,43 @@
-🚁 Drone-Object-Detection-Server
-基于 YOLOv8 + Flask + Docker 的高性能无人机目标检测云服务器
+# 🚁 Drone-Object-Detection-Server (Web Edition)
 
-🌟 项目亮点 (Highlights)
-本项目实现了一个完整的 AI 推理闭环，从底层硬件加速到前端可视化展示：
+> **基于 YOLOv8 + Flask + Docker 的全流程无人机视觉检测方案**
 
-GPU 加速推理：利用 WSL2 穿透技术，在 Docker 容器内调用宿主机 NVIDIA GeForce RTX 4060 算力。
+本项目专为 AI 开发者及学术研究设计，实现了从底层硬件加速到前端可视化展示的完整闭环。目前已在 **Ubuntu 22.04 (WSL2) + 原生 Docker Engine** 环境下经过深度测试。
 
-一键式部署：通过 Dockerfile 封装所有环境（CUDA, PyTorch, Ultralytics），解决复杂的依赖问题。
+---
 
-交互式 Web 界面：前端采用蓝色工业风设计，支持拖拽上传图片并实时查看检测结果。
+## 🌟 项目亮点 (Highlights)
 
-高性能架构：基于 Flask 后端，推理延迟低至 70ms 左右（使用 YOLOv8n 模型）。
+* **📦 纯粹 Linux 环境**：直接运行于原生 Docker Engine，摆脱 Docker Desktop 的资源损耗，推理响应更迅捷。
+* **⚡ GPU 穿透技术**：通过 **NVIDIA Container Toolkit** 实现宿主机与容器间的算力无损穿透，推理延迟低至 **70ms**。
+* **🛠️ 自动化运维**：推荐配合 `.bashrc` 别名脚本，实现容器销毁、镜像构建、服务重启与 Cloudflare 隧道打通的自动化流转。
+* **📂 专业代码管理**：精细化 `.gitignore` 配置，确保 GitHub 仓库只保留核心逻辑，本地保留测试图片与运行日志。
 
-🚀 快速开始 (Quick Start)
-1. 环境准备
-确保你的 Windows 已开启 WSL2，并安装了 Docker Desktop 以及 NVIDIA Container Toolkit。
+---
 
-2. 克隆仓库
-3. 构建并运行 (Docker方式)
-这是最推荐的方式，不需要在本地配置任何 Python 环境：
+## 🚀 快速开始 (Quick Start)
 
-4. 访问服务
-打开浏览器，访问：
-http://localhost:5000
+### 1. 环境准备
+确保你的 Linux (WSL2 Ubuntu) 系统已安装：
+* **Docker Engine** (docker-ce)
+* **NVIDIA Container Toolkit** (用于 Docker 调用 GPU 驱动)
 
-🛠️ 技术栈 (Tech Stack)
-Core AI: 
-
-Backend: Flask (Python)
-
-Containerization: Docker (NVIDIA Runtime)
-
-Hardware: NVIDIA RTX 4060 (16GB RAM)
-
-Environment: WSL2 + Ubuntu 22.04
-
-📂 项目结构 (Project Structure)
-📸 运行截图 (Demo)
-(建议在此处上传一张你浏览器运行成功的截图，重命名为 demo.png 并放在仓库里)
-
-💡 未来计划 (Roadmap)
-[ ] 支持实时视频流推理 (RTSP/RTMP)
-
-[ ] 增加检测结果自动保存到数据库的功能
-
-[ ] 适配更精准的 YOLOv8m/l 模型
-
-✍️ 操作建议：
-在 WSL2 终端输入 nano README.md。
-
-清空原有内容，把上面这段贴进去。
-
-保存退出后执行：
-
-git add README.md
-
-git commit -m "docs: 更新专业版 README"
-
-git push
+### 2. 克隆指定分支
+```bash
+git clone -b web-image-detection [https://github.com/924zbh/Drone-Object-Detection.git](https://github.com/924zbh/Drone-Object-Detection.git)
+cd Drone-Object-Detection
+3. 构建并运行如果您是第一次运行，请先构建 Docker 镜像：巴什docker build -t drone-cv .
+启动集装箱（建议挂载本地static/uploads 目录以便持久化图片）：巴什docker run -d --name drone-worker --gpus all --restart always \
+  -p 5000:5000 \
+  -v $(pwd)/static/uploads:/app/static/uploads \
+  drone-cv
+4. 访问服务打开浏览器访问：（http://localhost:5000或通过您的 Cloudflare 域名访问）🛠️ 技术栈（技术堆栈）维度技术方案核心算法Ultralytics YOLOv8（推理）顶层框架Flask 3.0.3容器技术原生 Docker 引擎方便环境WSL2（Ubuntu 22.04）硬件设施NVIDIA GeForce RTX 4060（16GB 显存）📂 目录结构说明纯文本.
+├── app.py              # Flask 后端核心逻辑
+├── Dockerfile          # 生产级环境镜像配置文件
+├── .gitignore          # 动态数据/权重忽略规则
+├── static/             # 前端静态资源 (CSS/JS)
+│   └── uploads/        # 检测图片存放地 (挂载点)
+├── templates/          # HTML 模板 (磨砂玻璃 UI)
+└── yolov8n.pt          # 预训练模型权重
+.
+作者924zbh学校：南昌职业大学专业：人工智能
