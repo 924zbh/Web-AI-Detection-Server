@@ -33,3 +33,15 @@ static/uploads/*
 result.jpg
 *.jpeg
 *.png
+
+# --- 环境与安全 ---
+.env
+.flaskenv
+
+# --- Docker ---
+.dockerignore
+*.tar
+
+# --- 缓存 ---
+.pytest_cache/
+.cache/

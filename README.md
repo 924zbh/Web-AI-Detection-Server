@@ -31,7 +31,7 @@ cd Web-AI-Detection-Server
   -p 5000:5000 \
   -v $(pwd)/static/uploads:/app/static/uploads \
   ai-detection-service
-4. 访问服务打开浏览器访问：http://localhost:5000🛠️ 技术栈 (Tech Stack)维度技术方案核心算法Ultralytics YOLOv8 (Inference Only)后端框架Flask 3.0.3容器技术Native Docker Engine开发环境WSL2 (Ubuntu 22.04)硬件加速NVIDIA GeForce RTX 4060 (16GB RAM)📂 目录结构说明Plaintext.
+4. 访问服务打开浏览器访问：http://localhost:5000🛠️ 技术栈 (Tech Stack)维度技术方案核心算法Ultralytics YOLOv8 (Inference Only)后端框架Flask 3.0.3容器技术Native Docker Engine开发环境WSL2 (Ubuntu 22.04)硬件加速NVIDIA GeForce RTX 4060 (8GB RAM)📂 目录结构说明Plaintext.
 ├── app.py              # Flask 后端推理核心逻辑
 ├── Dockerfile          # 多阶段构建镜像配置文件
 ├── .gitignore          # 动态数据/本地测试文件屏蔽规则

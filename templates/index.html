@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drone-CV | AI 视觉实验室</title>
+    <title>AI-Detection | 视觉推理实验室</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
@@ -145,8 +145,8 @@
 </head>
 <body>
     <div class="card">
-        <h2>Drone-CV</h2>
-        <p class="subtitle">基于 YOLO 的轻量化边缘计算推理终端</p>
+        <h2>AI Detection</h2>
+        <p class="subtitle">基于 YOLOv8l 的高性能视觉推理服务端</p>
         
         <div id="upload-ui">
             <div class="upload-area" onclick="document.getElementById('img-input').click()">
@@ -156,7 +156,7 @@
             </div>
             
             <input type="file" id="img-input" accept="image/*" onchange="updateFileName(this)">
-            <button class="btn" onclick="speedyUpload()">分析</button>
+            <button class="btn" onclick="speedyUpload()">智能分析</button>
             <p style="font-size: 11px; color: #94a3b8; margin-top: 15px;">智能压缩技术已启用，提升约 80% 传输速度</p>
         </div>
 
@@ -184,7 +184,7 @@
 
             Swal.fire({
                 title: 'AI 引擎启动中',
-                html: '执行本地预处理与数据压缩...',
+                html: '正在连接本地GPU执行数据推理...',
                 allowOutsideClick: false,
                 showConfirmButton: false,
                 didOpen: () => { Swal.showLoading(); }
@@ -197,7 +197,6 @@
             formData.append('image', blob, 'upload.jpg');
 
             try {
-                // 如果本地调试，请确保请求地址正确
                 const response = await fetch('/detect', { method: 'POST', body: formData });
                 const data = await response.json();
                 
@@ -208,12 +207,12 @@
                     document.getElementById('upload-ui').style.display = 'none';
                     document.getElementById('res-box').style.display = 'block';
                     document.getElementById('res-img').src = '/' + data.res_url + '?t=' + Date.now();
-                    document.getElementById('time-stat').innerHTML = `<b>处理成功</b> | 耗时 ${totalTime}s`;
+                    document.getElementById('time-stat').innerHTML = `<b>处理成功</b> | 全链路耗时 ${totalTime}s`;
                 } else {
                     throw new Error(data.error);
                 }
             } catch (err) {
-                Swal.fire({ icon: 'error', title: '分析失败', text: '后端服务连接超时，请检查网络。', confirmButtonColor: '#1e293b' });
+                Swal.fire({ icon: 'error', title: '分析失败', text: '无法连接到后端推理服务，请检查网络或 Cloudflare Tunnel 状态。', confirmButtonColor: '#1e293b' });
             }
         }
 
