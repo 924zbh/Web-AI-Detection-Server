@@ -1,13 +1,35 @@
-# 忽略权重文件
-*.pt
+# --- 系统与 IDE ---
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.log
 
-# 忽略 YOLO 运行结果
-runs/
-
-# 忽略 Jupyter 缓存
+# --- Python & 环境 ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.conda/
 .ipynb_checkpoints/
 
-# 忽略整个 .idea 文件夹（建议全部忽略，保持纯净）
-.idea/
+# --- YOLO & AI 相关 ---
+*.pt
+*.onnx
+*.engine
+runs/
 
-pycache/ runs/ *.pt *.jpg *.jpeg *.png result.jpg .venv/
+# --- 重点：图片处理 (精准打击) ---
+# 忽略上传的原始图片和检测结果
+static/uploads/results/*
+static/uploads/*
+
+# 但是！保留 uploads 文件夹结构本身 (防止代码拉下来报错找不到路径)
+# 这需要在 static/uploads/ 下建一个空的 .gitkeep 文件
+!static/uploads/.gitkeep
+!static/uploads/results/.gitkeep
+
+# --- 忽略本地调试产生的零散文件 ---
+result.jpg
+*.jpeg
+*.png
